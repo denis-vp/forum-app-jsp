@@ -1,5 +1,3 @@
-package org.example.forumappjsp;
-
 import java.io.*;
 
 import jakarta.servlet.http.*;
