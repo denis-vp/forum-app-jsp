@@ -17,6 +17,7 @@ import utils.JwtUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import static validator.CommentValidator.validateComment;
 
@@ -65,7 +66,12 @@ public class CommentServlet extends HttpServlet {
 
         // If the path is /, return all comments
         if (pathInfo == null || pathInfo.equals("/")) {
-            String commentsJsonString = this.gson.toJson(commentRepository.getComments());
+            List<Comment> comments = this.commentRepository.getComments();
+            comments.forEach(comment -> {
+                comment.getUser().setPosts(null);
+                comment.getPost().setComments(null);
+            });
+            String commentsJsonString = this.gson.toJson(comments);
             out.print(commentsJsonString);
         } else {
             String[] splits = pathInfo.split("/");
@@ -78,19 +84,31 @@ public class CommentServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
+                comment.getUser().setPosts(null);
+                comment.getPost().setComments(null);
                 String commentJsonString = this.gson.toJson(comment);
                 out.print(commentJsonString);
             }
             // If the path is /post/{postId}, return all comments for the post with the given ID
             else if (splits.length == 3 && splits[1].equals("post")) {
                 String postId = splits[2];
-                String commentsJsonString = this.gson.toJson(commentRepository.getCommentsByPostId(postId));
+                List<Comment> comments = this.commentRepository.getCommentsByPostId(postId);
+                comments.forEach(comment -> {
+                    comment.getUser().setPosts(null);
+                    comment.getPost().setComments(null);
+                });
+                String commentsJsonString = this.gson.toJson(comments);
                 out.print(commentsJsonString);
             }
             // If the path is /user/{userId}, return all comments by the user with the given ID
             else if (splits.length == 3 && splits[1].equals("user")) {
                 String userId = splits[2];
-                String commentsJsonString = this.gson.toJson(commentRepository.getCommentsByUserId(userId));
+                List<Comment> comments = this.commentRepository.getCommentsByUserId(userId);
+                comments.forEach(comment -> {
+                    comment.getUser().setPosts(null);
+                    comment.getPost().setComments(null);
+                });
+                String commentsJsonString = this.gson.toJson(comments);
                 out.print(commentsJsonString);
             }
             // Otherwise, return a bad request status

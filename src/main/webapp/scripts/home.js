@@ -15,18 +15,22 @@ window.onload = () => {
         window.location.href = './postCreate.jsp';
     });
 
-    // const posts = $('#postsList');
-    // $.ajax({
-    //     url: '/forum_app_jsp_war_exploded/post/',
-    //     type: 'GET',
-    //     dataType: 'json',
-    //     success: (data) => {
-    //         data.forEach(post => {
-    //             posts.append(postFactory(post.user.username, post.title, post.content));
-    //         });
-    //     },
-    //     error: (error) => {
-    //         console.log(error);
-    //     }
-    // });
+    const posts = $('#postsList');
+    $.ajax({
+        url: '/forum_app_jsp_war_exploded/post/',
+        method: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
+        },
+        success: (data) => {
+            data.forEach(post => {
+                posts.append(postFactory(post.user.username, post.title, post.content));
+            });
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            let win = window.open('', '_self');
+            win.document.write(jqXHR.responseText);
+        }
+    });
 }

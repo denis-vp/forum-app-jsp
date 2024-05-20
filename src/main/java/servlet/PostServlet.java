@@ -15,6 +15,8 @@ import utils.JwtUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static validator.PostValidator.validatePost;
 
@@ -61,7 +63,12 @@ public class PostServlet extends HttpServlet {
 
         // If the path is /, return all posts
         if (pathInfo == null || pathInfo.equals("/")) {
-            String postsJsonString = this.gson.toJson(postRepository.getPosts());
+            List<Post> posts = postRepository.getPosts();
+            posts.forEach(post -> {
+                post.getUser().setPosts(null);
+                post.setComments(null);
+            });
+            String postsJsonString = this.gson.toJson(posts);
             out.print(postsJsonString);
         } else {
             String[] splits = pathInfo.split("/");
@@ -74,13 +81,20 @@ public class PostServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
+                post.getUser().setPosts(null);
+                post.setComments(null);
                 String postJsonString = this.gson.toJson(post);
                 out.print(postJsonString);
             }
             // If the path is /user/{userId}, return all posts by the user with the given ID
             else if (splits.length == 3 && splits[1].equals("user")) {
                 String userId = splits[2];
-                String postsJsonString = this.gson.toJson(postRepository.getPostsByUserId(userId));
+                List<Post> posts = postRepository.getPostsByUserId(userId);
+                posts.forEach(post -> {
+                    post.getUser().setPosts(null);
+                    post.setComments(null);
+                });
+                String postsJsonString = this.gson.toJson(posts);
                 out.print(postsJsonString);
             }
             // Otherwise, return a bad request status

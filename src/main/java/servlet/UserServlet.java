@@ -16,6 +16,7 @@ import validator.UserValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +81,7 @@ public class UserServlet extends HttpServlet {
             // Hide the password and salt
             user.setPassword(null);
             user.setSalt(null);
+            user.setPosts(null);
             String userJsonString = this.gson.toJson(user);
             out.print(userJsonString);
         }
@@ -177,6 +179,7 @@ public class UserServlet extends HttpServlet {
 
         user.setPassword(null);
         user.setSalt(null);
+        user.setPosts(null);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("user", user);
