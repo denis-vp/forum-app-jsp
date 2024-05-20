@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Home</h1>
-    <div class="container-lg" id="postsList"></div>
     <button id="postCreateButton">Create Post</button>
+    <div class="container-lg" id="postsList"></div>
 </body>
 </html>

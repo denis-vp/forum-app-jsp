@@ -26,7 +26,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Comment.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true, targetEntity = Comment.class, fetch = FetchType.EAGER)
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {

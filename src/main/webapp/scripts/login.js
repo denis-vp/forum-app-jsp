@@ -19,7 +19,6 @@ window.onload = () => {
             success: (data) => {
                 localStorage.setItem('user', JSON.stringify(data.user));
                 localStorage.setItem('token', JSON.stringify(data.token));
-                alert('Login successful!');
                 window.location.href = './home.jsp';
             },
             error: (jqXHR, textStatus, errorThrown) => {

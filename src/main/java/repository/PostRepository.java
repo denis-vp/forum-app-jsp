@@ -98,6 +98,10 @@ public class PostRepository {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             Post post = session.get(Post.class, Long.parseLong(id));
+
+            // Remove association
+            post.getUser().getPosts().remove(post);
+
             session.delete(post);
             transaction.commit();
         } catch (Exception e) {

@@ -31,7 +31,7 @@ public class User {
     @Column(name = "salt")
     private String salt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Post.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, targetEntity = Post.class, fetch = FetchType.EAGER)
     private List<Post> posts = new ArrayList<>();
 
     public User() {

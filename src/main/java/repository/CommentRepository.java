@@ -119,6 +119,10 @@ public class CommentRepository {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             Comment comment = session.get(Comment.class, Long.parseLong(id));
+
+            // Remove association
+            comment.getPost().getComments().remove(comment);
+
             session.delete(comment);
             transaction.commit();
         } catch (Exception e) {

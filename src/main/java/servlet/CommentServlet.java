@@ -195,8 +195,8 @@ public class CommentServlet extends HttpServlet {
             return;
         }
 
-        String idAttr = (String) req.getAttribute("id");
-        User user = userRepository.getUserById(idAttr);
+        String id = (String) req.getAttribute("id");
+        User user = userRepository.getUserById(id);
         if (user == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
