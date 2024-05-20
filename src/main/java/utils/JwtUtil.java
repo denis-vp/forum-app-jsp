@@ -13,8 +13,8 @@ public class JwtUtil {
     private static final Algorithm ALGORITHM ;
 
     static {
-        Dotenv dotenv = Dotenv.load();
-        SECRET = dotenv.get("SECRET");
+//        Dotenv dotenv = Dotenv.load();
+        SECRET = "D1JcyY87dUlxvAsXH1X9M5cHp7Ou9UCB";
         if (SECRET == null) {
             throw new IllegalArgumentException("SECRET must be set in .env");
         }

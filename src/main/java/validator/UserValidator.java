@@ -30,7 +30,7 @@ public class UserValidator {
         if (user.getPassword() == null || user.getPassword().length() < 8 || user.getPassword().length() > 32) {
             errors.add("Password must be between 8 and 32 characters");
         }
-        if (!user.getPassword().matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$")) {
+        if (!user.getPassword().matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$")) {
             errors.add("Password must contain at least one uppercase letter, one lowercase letter, and one number");
         }
 

@@ -6,7 +6,6 @@ import org.hibernate.Session;
 import utils.HibernateUtil;
 
 import java.util.List;
-import java.util.UUID;
 
 public class CommentRepository {
     public List<Comment> getComments() {
@@ -75,7 +74,7 @@ public class CommentRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            comment = session.get(Comment.class, id);
+            comment = session.get(Comment.class, Long.parseLong(id));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -119,7 +118,7 @@ public class CommentRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Comment comment = session.get(Comment.class, id);
+            Comment comment = session.get(Comment.class, Long.parseLong(id));
             session.delete(comment);
             transaction.commit();
         } catch (Exception e) {

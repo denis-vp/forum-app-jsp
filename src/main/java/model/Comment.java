@@ -1,23 +1,26 @@
 package model;
 
 import javax.persistence.*;
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "Comment")
+@Table(name = "comment")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private UUID id;
+    @Column(name = "comment_id")
+    private Long id;
 
+    @NotNull
     @Column(name = "content")
     private String content;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
@@ -25,14 +28,12 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String content, User user, Post post) {
-        this.content = content;
-        this.user = user;
-        this.post = post;
+    public Long getId() {
+        return id;
     }
 
-    public UUID getId() {
-        return id;
+    public String getIdString() {
+        return id.toString();
     }
 
     public String getContent() {
@@ -47,7 +48,15 @@ public class Comment {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Post getPost() {
         return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }

@@ -53,7 +53,7 @@ public class PostRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            post = session.get(Post.class, id);
+            post = session.get(Post.class, Long.parseLong(id));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -97,7 +97,7 @@ public class PostRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Post post = session.get(Post.class, id);
+            Post post = session.get(Post.class, Long.parseLong(id));
             session.delete(post);
             transaction.commit();
         } catch (Exception e) {

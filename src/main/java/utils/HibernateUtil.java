@@ -9,13 +9,13 @@ public class HibernateUtil {
 
     static {
         try {
-            Dotenv dotenv = Dotenv.load();
+//            Dotenv dotenv = Dotenv.load();
 
             Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.connection.url", dotenv.get("DB_URL"));
-            configuration.setProperty("hibernate.connection.username", dotenv.get("DB_USERNAME"));
-            configuration.setProperty("hibernate.connection.password", dotenv.get("DB_PASSWORD"));
             configuration.configure();
+//            configuration.setProperty("hibernate.connection.url", dotenv.get("DB_URL"));
+//            configuration.setProperty("hibernate.connection.username", dotenv.get("DB_USERNAME"));
+//            configuration.setProperty("hibernate.connection.password", dotenv.get("DB_PASSWORD"));
 
             sessionFactory = configuration.buildSessionFactory();
         } catch (Throwable ex) {

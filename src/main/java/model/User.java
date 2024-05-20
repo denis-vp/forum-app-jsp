@@ -1,47 +1,48 @@
 package model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private UUID id;
+    @Column(name = "user_id")
+    private Long id;
 
+    @NotNull
     @Column(name = "username")
     private String username;
 
+    @Email
+    @NotNull
     @Column(name = "email")
     private String email;
 
+    @NotNull
     @Column(name = "password")
     private String password;
 
+    @NotNull
     @Column(name = "salt")
     private String salt;
 
-    @OneToMany(mappedBy = "user")
-    private List<Post> posts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Post.class, fetch = FetchType.EAGER)
+    private List<Post> posts = new ArrayList<>();
 
     public User() {
     }
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public String getIdString() {
+        return id.toString();
     }
 
     public String getUsername() {
@@ -78,5 +79,13 @@ public class User {
 
     public List<Post> getPosts() {
         return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    public void addPost(Post post) {
+        this.posts.add(post);
     }
 }

@@ -1,9 +1,10 @@
-package service;
+package servlet;
 
 import com.google.gson.Gson;
 import exception.UserException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,10 +16,9 @@ import validator.UserValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.UUID;
 
-@WebServlet(name = "userService", urlPatterns = {"/user/*"})
-public class UserService extends HttpServlet {
+@WebServlet(name = "userServlet", urlPatterns = {"/user/*"})
+public class UserServlet extends HttpServlet {
     private UserRepository userRepository;
     private Gson gson;
 
@@ -102,14 +102,13 @@ public class UserService extends HttpServlet {
         user.setPassword(hashedPassword);
         user.setSalt(salt);
 
-        String idAttr = (String) req.getAttribute("id");
-        UUID id = UUID.fromString(idAttr);
-        if (!user.getId().equals(id)) {
+        String id = (String) req.getAttribute("id");
+        if (!user.getIdString().equals(id)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        User userFound = userRepository.getUserById(user.getId().toString());
+        User userFound = userRepository.getUserById(user.getIdString());
         if (userFound == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -135,15 +134,14 @@ public class UserService extends HttpServlet {
             return;
         }
 
-        String idAttr = (String) req.getAttribute("id");
-        User userFound = userRepository.getUserById(idAttr);
+        String id = (String) req.getAttribute("id");
+        User userFound = userRepository.getUserById(id);
         if (userFound == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        UUID id = UUID.fromString(idAttr);
-        if (!user.getId().equals(id)) {
+        if (!user.getIdString().equals(id)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
@@ -169,9 +167,10 @@ public class UserService extends HttpServlet {
             return;
         }
 
-        String token = JwtUtil.generateToken(user.getId().toString());
-        resp.setContentType("text/plain");
-        resp.getWriter().print(this.gson.toJson(token));
+        String token = JwtUtil.generateToken(user.getIdString());
+        Cookie tokenCookie = new Cookie("token", token);
+        tokenCookie.setHttpOnly(true);
+        resp.addCookie(tokenCookie);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -182,6 +181,12 @@ public class UserService extends HttpServlet {
             UserValidator.validateUser(user);
         } catch (UserException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            return;
+        }
+
+        User userFound = userRepository.getUserByEmail(user.getEmail());
+        if (userFound != null) {
+            resp.sendError(HttpServletResponse.SC_CONFLICT, "Email already exists");
             return;
         }
 

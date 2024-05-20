@@ -1,33 +1,33 @@
-package service;
+package servlet;
 
-import exception.PostException;
+import com.google.gson.Gson;
+import exception.CommentException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Post;
+import model.Comment;
 import model.User;
-import repository.PostRepository;
-import com.google.gson.Gson;
+import repository.CommentRepository;
 import repository.UserRepository;
 import utils.JwtUtil;
-import validator.PostValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.UUID;
 
-@WebServlet(name = "postService", urlPatterns = {"/post/*"})
-public class PostService extends HttpServlet {
+import static validator.CommentValidator.validateComment;
+
+@WebServlet(name = "commentServlet", urlPatterns = {"/comment/*"})
+public class CommentServlet extends HttpServlet {
     private UserRepository userRepository;
-    private PostRepository postRepository;
+    private CommentRepository commentRepository;
     private Gson gson;
 
     @Override
     public void init() {
         this.userRepository = new UserRepository();
-        this.postRepository = new PostRepository();
+        this.commentRepository = new CommentRepository();
         this.gson = new Gson();
     }
 
@@ -59,34 +59,39 @@ public class PostService extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
 
-        // If the path is /, return all posts
+        // If the path is /, return all comments
         if (pathInfo == null || pathInfo.equals("/")) {
-            String postsJsonString = this.gson.toJson(postRepository.getPosts());
-            out.print(postsJsonString);
+            String commentsJsonString = this.gson.toJson(commentRepository.getComments());
+            out.print(commentsJsonString);
         } else {
             String[] splits = pathInfo.split("/");
-            // If the path is /{postId}, return the post with the given ID
+            // If the path is /{commentId}, return the comment with the given ID
             if (splits.length == 2) {
-                String postId = splits[1];
-                Post post = postRepository.getPostById(postId);
-                // If the post is not found, return a not found status
-                if (post == null) {
+                String commentId = splits[1];
+                Comment comment = commentRepository.getCommentById(commentId);
+                // If the comment is not found, return a not found status
+                if (comment == null) {
                     resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                     return;
                 }
-                String postJsonString = this.gson.toJson(post);
-                out.print(postJsonString);
+                String commentJsonString = this.gson.toJson(comment);
+                out.print(commentJsonString);
             }
-            // If the path is /user/{userId}, return all posts by the user with the given ID
+            // If the path is /post/{postId}, return all comments for the post with the given ID
+            else if (splits.length == 3 && splits[1].equals("post")) {
+                String postId = splits[2];
+                String commentsJsonString = this.gson.toJson(commentRepository.getCommentsByPostId(postId));
+                out.print(commentsJsonString);
+            }
+            // If the path is /user/{userId}, return all comments by the user with the given ID
             else if (splits.length == 3 && splits[1].equals("user")) {
                 String userId = splits[2];
-                String postsJsonString = this.gson.toJson(postRepository.getPostsByUserId(userId));
-                out.print(postsJsonString);
+                String commentsJsonString = this.gson.toJson(commentRepository.getCommentsByUserId(userId));
+                out.print(commentsJsonString);
             }
             // Otherwise, return a bad request status
             else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
             }
         }
         out.flush();
@@ -94,36 +99,35 @@ public class PostService extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Post post = this.gson.fromJson(req.getReader(), Post.class);
-        postRepository.savePost(post);
+        Comment comment = this.gson.fromJson(req.getReader(), Comment.class);
+        commentRepository.saveComment(comment);
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Post post = this.gson.fromJson(req.getReader(), Post.class);
-        String idAttr = (String) req.getAttribute("id");
-        UUID id = UUID.fromString(idAttr);
+        Comment comment = this.gson.fromJson(req.getReader(), Comment.class);
+        String id = (String) req.getAttribute("id");
 
-        if (!post.getUser().getId().equals(id)) {
+        if (!comment.getUser().getIdString().equals(id)) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
         try {
-            PostValidator.validatePost(post);
-        } catch (PostException e) {
+            validateComment(comment);
+        } catch (CommentException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
         }
 
-        Post postFound = postRepository.getPostById(post.getId().toString());
-        if (postFound == null) {
+        Comment commentFound = commentRepository.getCommentById(comment.getIdString());
+        if (commentFound == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        postRepository.updatePost(post);
+        commentRepository.updateComment(comment);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -136,9 +140,9 @@ public class PostService extends HttpServlet {
             return;
         }
 
-        String postId = splits[1];
-        Post post = postRepository.getPostById(postId);
-        if (post == null) {
+        String commentId = splits[1];
+        Comment comment = commentRepository.getCommentById(commentId);
+        if (comment == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -150,12 +154,12 @@ public class PostService extends HttpServlet {
             return;
         }
 
-        if (!post.getUser().getId().equals(user.getId())) {
+        if (!comment.getUser().getIdString().equals(user.getIdString())) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
 
-        postRepository.deletePost(postId);
+        commentRepository.deleteComment(commentId);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

@@ -7,7 +7,6 @@ import utils.HibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class UserRepository {
     public List<User> getUsers() {
@@ -34,7 +33,7 @@ public class UserRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            user = session.get(User.class, UUID.fromString(id));
+            user = session.get(User.class, Long.parseLong(id));
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -98,7 +97,7 @@ public class UserRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            User user = session.get(User.class, UUID.fromString(id));
+            User user = session.get(User.class, Long.parseLong(id));
             session.delete(user);
             transaction.commit();
         } catch (Exception e) {
