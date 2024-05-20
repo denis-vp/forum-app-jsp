@@ -19,6 +19,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static validator.UserValidator.validateUser;
+
 @WebServlet(name = "userServlet", urlPatterns = {"/user/*"})
 public class UserServlet extends HttpServlet {
     private UserRepository userRepository;
@@ -194,7 +196,7 @@ public class UserServlet extends HttpServlet {
         User user = this.gson.fromJson(req.getReader(), User.class);
 
         try {
-            UserValidator.validateUser(user);
+            validateUser(user);
         } catch (UserException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;

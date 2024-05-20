@@ -8,8 +8,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Comment;
+import model.Post;
 import model.User;
 import repository.CommentRepository;
+import repository.PostRepository;
 import repository.UserRepository;
 import utils.JwtUtil;
 
@@ -21,12 +23,14 @@ import static validator.CommentValidator.validateComment;
 @WebServlet(name = "commentServlet", urlPatterns = {"/comment/*"})
 public class CommentServlet extends HttpServlet {
     private UserRepository userRepository;
+    private PostRepository postRepository;
     private CommentRepository commentRepository;
     private Gson gson;
 
     @Override
     public void init() {
         this.userRepository = new UserRepository();
+        this.postRepository = new PostRepository();
         this.commentRepository = new CommentRepository();
         this.gson = new Gson();
     }
@@ -102,6 +106,29 @@ public class CommentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Comment comment = this.gson.fromJson(req.getReader(), Comment.class);
+        String id = (String) req.getAttribute("id");
+
+        try {
+            validateComment(comment);
+        } catch (CommentException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            return;
+        }
+
+        User user = userRepository.getUserById(id);
+        if (user == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        Post post = postRepository.getPostById(comment.getPost().getIdString());
+        if (post == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        comment.setUser(user);
+        comment.setPost(post);
+
         commentRepository.saveComment(comment);
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
@@ -110,11 +137,6 @@ public class CommentServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Comment comment = this.gson.fromJson(req.getReader(), Comment.class);
         String id = (String) req.getAttribute("id");
-
-        if (!comment.getUser().getIdString().equals(id)) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
 
         try {
             validateComment(comment);
@@ -127,7 +149,13 @@ public class CommentServlet extends HttpServlet {
         if (commentFound == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else if (!commentFound.getUser().getIdString().equals(id)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
+
+        comment.setUser(commentFound.getUser());
+        comment.setPost(commentFound.getPost());
 
         commentRepository.updateComment(comment);
         resp.setStatus(HttpServletResponse.SC_OK);

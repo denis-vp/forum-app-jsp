@@ -3,7 +3,6 @@ package servlet;
 import exception.PostException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,10 +12,11 @@ import repository.PostRepository;
 import com.google.gson.Gson;
 import repository.UserRepository;
 import utils.JwtUtil;
-import validator.PostValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import static validator.PostValidator.validatePost;
 
 @WebServlet(name = "postServlet", urlPatterns = {"/post/*"})
 public class PostServlet extends HttpServlet {
@@ -97,6 +97,23 @@ public class PostServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Post post = this.gson.fromJson(req.getReader(), Post.class);
+        String id = (String) req.getAttribute("id");
+
+        try {
+            validatePost(post);
+        } catch (PostException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            return;
+        }
+
+        User user = userRepository.getUserById(id);
+        if (user == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        post.setUser(user);
+
         postRepository.savePost(post);
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
@@ -106,13 +123,8 @@ public class PostServlet extends HttpServlet {
         Post post = this.gson.fromJson(req.getReader(), Post.class);
         String id = (String) req.getAttribute("id");
 
-        if (!post.getUser().getIdString().equals(id)) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
         try {
-            PostValidator.validatePost(post);
+            validatePost(post);
         } catch (PostException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
@@ -122,7 +134,12 @@ public class PostServlet extends HttpServlet {
         if (postFound == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        } else if (!postFound.getUser().getIdString().equals(id)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
+
+        post.setUser(postFound.getUser());
 
         postRepository.updatePost(post);
         resp.setStatus(HttpServletResponse.SC_OK);
