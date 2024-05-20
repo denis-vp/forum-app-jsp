@@ -4,11 +4,14 @@ const commentFactory = (id, username, content, ownerId) => {
     if (ownerId === storedUserId) {
         deleteButton = `<a id="deleteCommentButton${id}" href="#">Delete</a>`;
     }
+
     return `
-    <div id="comment${id}" class="post-comment">
-        <h6 class="comment-username">${username}</h6>
-        <p>${content}</p>
-        ${deleteButton}
+    <div id="comment${id}" class="card mb-3">
+        <div class="card-body">
+            <h6 class="text-primary fw-bold mb-3">@${username}</h6>
+            <p class="card-text mb-2">${content}</p>
+            ${deleteButton}
+        </div>
     </div>`;
 }
 
@@ -73,7 +76,7 @@ window.onload = () => {
         },
         success: (data) => {
             $('#postTitle').text(data.title);
-            $('#postUsername').text(data.user.username);
+            $('#postUsername').text("@" + data.user.username);
             $('#postContent').text(data.content);
         },
         error: (jqXHR, textStatus, errorThrown) => {
@@ -82,7 +85,7 @@ window.onload = () => {
         }
     });
 
-    const comments = $('#postDetails');
+    const comments = $('#commentsList');
     $.ajax({
         url: '/forum_app_jsp_war_exploded/comment/post/' + id,
         method: 'GET',

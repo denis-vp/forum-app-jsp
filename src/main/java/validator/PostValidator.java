@@ -16,8 +16,8 @@ public class PostValidator {
         }
 
         // Content validation
-        if (post.getContent() == null || post.getContent().isEmpty() || post.getContent().length() > 255) {
-            errors.add("Content must be between 1 and 255 characters");
+        if (post.getContent() == null || post.getContent().isEmpty()) {
+            errors.add("Content must not be empty");
         }
 
         if (!errors.isEmpty()) {

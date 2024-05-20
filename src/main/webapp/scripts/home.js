@@ -5,11 +5,17 @@ const postFactory = (id, username, title, content, ownerId) => {
         deleteButton = `<a id="deletePostButton${id}" href="#" class="card-link">Delete</a>`;
     }
     return `
-    <div id="post${id}" class="card" style="width: 18rem;">
+    <div id="post${id}" class="card mb-3">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="h5 m-0">@${username}</div>
+            </div>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">${username}</h6>
+            <h4 class="card-title">${title}</h4>
             <p class="card-text">${content}</p>
+        </div>
+        <div class="card-footer">
             <a href="./comments.jsp?postId=${id}" class="card-link">Comments</a>
             ${deleteButton}
         </div>
@@ -46,7 +52,58 @@ const setUpPost = (id) => {
     });
 }
 
+const getNewPost = (id, posts) => {
+    $.ajax({
+        url: '/forum_app_jsp_war_exploded/post/' + id,
+        method: 'GET',
+        contentType: 'application/json',
+        headers: {
+            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
+        },
+        success: (post) => {
+            posts.append(postFactory(post.id, post.user.username, post.title, post.content, post.user.id));
+            setUpPost(post.id);
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            let win = window.open('', '_self');
+            win.document.write(jqXHR.responseText);
+        }
+    });
+}
+
 window.onload = () => {
+    $('#newPostButton').click(() => {
+        const title = $('#postTitle').val();
+        const content = $('#postContent').val();
+
+        if (!title || !content) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        $.ajax({
+            url: '/forum_app_jsp_war_exploded/post/',
+            method: 'POST',
+            data: JSON.stringify({
+                title,
+                content
+            }),
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
+            },
+            success: (data) => {
+                getNewPost(data, posts);
+                $('#postTitle').val('');
+                $('#postContent').val('');
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                let win = window.open('', '_self');
+                win.document.write(jqXHR.responseText);
+            }
+        });
+    });
+
     $('#postCreateButton').click(() => {
         window.location.href = './postCreate.jsp';
     });

@@ -7,29 +7,29 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="../scripts/comments.js"></script>
 </head>
-<body>
+<body style="background-color: #eee;">
 <div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="post-content">
-                <div class="post-container">
-                    <div class="post-title">
-                        <h1 id="postTitle"></h1>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-10">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div id="postUsername" class="h5 m-0"></div>
                     </div>
-                    <div id="postDetails" class="post-detail">
-                        <div class="user-info">
-                            <p id="postUsername"></p>
-                        </div>
-                        <div class="line-divider"></div>
-                        <div class="post-text">
-                            <p id="postContent"></p>
-                        </div>
-                        <div class="line-divider"></div>
-                    </div>
-                    <input id="newComment" type="text" name="new-comment" />
+                </div>
+                <div class="card-body">
+                    <h4 id="postTitle" class="card-title"></h4>
+                    <p id="postContent" class="card-text"></p>
+                </div>
+                <div class="card-footer">
+                    <input id="newComment" class="form-control" type="text" name="new-comment"
+                           placeholder="Write a new comment"/>
                 </div>
             </div>
         </div>
+        <div id="commentsList" class="col-md-9 offset-md-1">
+        </div>
+    </div>
     </div>
 </div>
 </body>
