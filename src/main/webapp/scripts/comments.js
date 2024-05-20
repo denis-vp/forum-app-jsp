@@ -27,9 +27,6 @@ const setUpComment = (id) => {
             url: '/forum_app_jsp_war_exploded/comment/' + id,
             method: 'DELETE',
             contentType: 'application/json',
-            headers: {
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-            },
             success: (data) => {
                 $(`#comment${id}`).remove();
             },
@@ -50,9 +47,6 @@ const getNewComment = (id, comments) => {
         url: '/forum_app_jsp_war_exploded/comment/' + id,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-        },
         success: (comment) => {
             comments.append(commentFactory(comment.id, comment.user.username, comment.content, comment.user.id));
             setUpComment(comment.id);
@@ -71,9 +65,6 @@ window.onload = () => {
         url: '/forum_app_jsp_war_exploded/post/' + id,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-        },
         success: (data) => {
             $('#postTitle').text(data.title);
             $('#postUsername').text("@" + data.user.username);
@@ -90,9 +81,6 @@ window.onload = () => {
         url: '/forum_app_jsp_war_exploded/comment/post/' + id,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-        },
         success: (data) => {
             data.forEach(comment => {
                 comments.append(commentFactory(comment.id, comment.user.username, comment.content, comment.user.id));
@@ -125,9 +113,6 @@ window.onload = () => {
                 content: content,
             }),
             contentType: 'application/json',
-            headers: {
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-            },
             success: (data) => {
                 getNewComment(data, comments);
                 $('#newComment').val('');

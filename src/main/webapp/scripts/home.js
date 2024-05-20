@@ -34,9 +34,6 @@ const setUpPost = (id) => {
             url: '/forum_app_jsp_war_exploded/post/' + id,
             method: 'DELETE',
             contentType: 'application/json',
-            headers: {
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-            },
             success: (data) => {
                 $(`#post${id}`).remove();
             },
@@ -57,9 +54,6 @@ const getNewPost = (id, posts) => {
         url: '/forum_app_jsp_war_exploded/post/' + id,
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-        },
         success: (post) => {
             posts.append(postFactory(post.id, post.user.username, post.title, post.content, post.user.id));
             setUpPost(post.id);
@@ -89,9 +83,6 @@ window.onload = () => {
                 content
             }),
             contentType: 'application/json',
-            headers: {
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-            },
             success: (data) => {
                 getNewPost(data, posts);
                 $('#postTitle').val('');
@@ -113,9 +104,6 @@ window.onload = () => {
         url: '/forum_app_jsp_war_exploded/post/',
         method: 'GET',
         contentType: 'application/json',
-        headers: {
-            'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
-        },
         success: (data) => {
             data.forEach(post => {
                 posts.append(postFactory(post.id, post.user.username, post.title, post.content, post.user.id));

@@ -17,8 +17,7 @@ window.onload = () => {
             }),
             contentType: 'application/json',
             success: (data) => {
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('token', JSON.stringify(data.token));
+                localStorage.setItem('user', JSON.stringify(data));
                 window.location.href = './home.jsp';
             },
             error: (jqXHR, textStatus, errorThrown) => {

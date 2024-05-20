@@ -42,13 +42,21 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        String authHeader = req.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String token = null;
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token == null) {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-
-        String token = authHeader.substring("Bearer ".length());
 
         String id = JwtUtil.verifyToken(token);
         if (id == null) {
@@ -181,11 +189,12 @@ public class UserServlet extends HttpServlet {
         user.setSalt(null);
         user.setPosts(null);
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("user", user);
-        responseMap.put("token", token);
+        Cookie tokenCookie = new Cookie("token", token);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setPath("/");
+        resp.addCookie(tokenCookie);
 
-        String responseJsonString = this.gson.toJson(responseMap);
+        String responseJsonString = this.gson.toJson(user);
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
