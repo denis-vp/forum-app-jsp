@@ -65,11 +65,12 @@ public class PostRepository {
         return post;
     }
 
-    public void savePost(Post post) {
+    public Long savePost(Post post) {
         Transaction transaction = null;
+        Long generatedId = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(post);
+            generatedId = (Long) session.save(post);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -77,6 +78,7 @@ public class PostRepository {
             }
             e.printStackTrace();
         }
+        return generatedId;
     }
 
     public void updatePost(Post post) {

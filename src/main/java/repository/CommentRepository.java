@@ -86,11 +86,12 @@ public class CommentRepository {
         return comment;
     }
 
-    public void saveComment(Comment comment) {
+    public Long saveComment(Comment comment) {
         Transaction transaction = null;
+        Long generatedId = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(comment);
+            generatedId = (Long) session.save(comment);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -98,13 +99,15 @@ public class CommentRepository {
             }
             e.printStackTrace();
         }
+        return generatedId;
     }
 
-    public void updateComment(Comment comment) {
+    public Long updateComment(Comment comment) {
         Transaction transaction = null;
+        Long generatedId = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.update(comment);
+            generatedId = (Long) session.save(comment);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -112,6 +115,7 @@ public class CommentRepository {
             }
             e.printStackTrace();
         }
+        return generatedId;
     }
 
     public void deleteComment(String id) {

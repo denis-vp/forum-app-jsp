@@ -65,11 +65,12 @@ public class UserRepository {
         return user;
     }
 
-    public void saveUser(User user) {
+    public Long saveUser(User user) {
         Transaction transaction = null;
+        Long generatedId = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(user);
+            generatedId = (Long) session.save(user);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -77,6 +78,7 @@ public class UserRepository {
             }
             e.printStackTrace();
         }
+        return generatedId;
     }
 
     public void updateUser(User user) {

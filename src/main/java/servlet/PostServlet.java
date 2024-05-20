@@ -66,6 +66,8 @@ public class PostServlet extends HttpServlet {
             List<Post> posts = postRepository.getPosts();
             posts.forEach(post -> {
                 post.getUser().setPosts(null);
+                post.getUser().setPassword(null);
+                post.getUser().setSalt(null);
                 post.setComments(null);
             });
             String postsJsonString = this.gson.toJson(posts);
@@ -82,6 +84,8 @@ public class PostServlet extends HttpServlet {
                     return;
                 }
                 post.getUser().setPosts(null);
+                post.getUser().setPassword(null);
+                post.getUser().setSalt(null);
                 post.setComments(null);
                 String postJsonString = this.gson.toJson(post);
                 out.print(postJsonString);
@@ -93,6 +97,8 @@ public class PostServlet extends HttpServlet {
                 posts.forEach(post -> {
                     post.getUser().setPosts(null);
                     post.setComments(null);
+                    post.getUser().setPassword(null);
+                    post.getUser().setSalt(null);
                 });
                 String postsJsonString = this.gson.toJson(posts);
                 out.print(postsJsonString);
@@ -128,7 +134,14 @@ public class PostServlet extends HttpServlet {
 
         post.setUser(user);
 
-        postRepository.savePost(post);
+        Long generatedId = postRepository.savePost(post);
+
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        out.print(this.gson.toJson(generatedId));
+        out.flush();
+
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
 

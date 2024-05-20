@@ -20,7 +20,6 @@ window.onload = () => {
                 'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
             },
             success: (data) => {
-                alert('Post created successfully!');
                 window.location.href = './home.jsp';
             },
             error: (jqXHR, textStatus, errorThrown) => {

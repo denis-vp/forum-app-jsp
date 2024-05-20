@@ -69,6 +69,8 @@ public class CommentServlet extends HttpServlet {
             List<Comment> comments = this.commentRepository.getComments();
             comments.forEach(comment -> {
                 comment.getUser().setPosts(null);
+                comment.getUser().setPassword(null);
+                comment.getUser().setSalt(null);
                 comment.getPost().setComments(null);
             });
             String commentsJsonString = this.gson.toJson(comments);
@@ -85,6 +87,8 @@ public class CommentServlet extends HttpServlet {
                     return;
                 }
                 comment.getUser().setPosts(null);
+                comment.getUser().setPassword(null);
+                comment.getUser().setSalt(null);
                 comment.getPost().setComments(null);
                 String commentJsonString = this.gson.toJson(comment);
                 out.print(commentJsonString);
@@ -95,6 +99,8 @@ public class CommentServlet extends HttpServlet {
                 List<Comment> comments = this.commentRepository.getCommentsByPostId(postId);
                 comments.forEach(comment -> {
                     comment.getUser().setPosts(null);
+                    comment.getUser().setPassword(null);
+                    comment.getUser().setSalt(null);
                     comment.getPost().setComments(null);
                 });
                 String commentsJsonString = this.gson.toJson(comments);
@@ -106,6 +112,8 @@ public class CommentServlet extends HttpServlet {
                 List<Comment> comments = this.commentRepository.getCommentsByUserId(userId);
                 comments.forEach(comment -> {
                     comment.getUser().setPosts(null);
+                    comment.getUser().setPassword(null);
+                    comment.getUser().setSalt(null);
                     comment.getPost().setComments(null);
                 });
                 String commentsJsonString = this.gson.toJson(comments);
@@ -124,6 +132,7 @@ public class CommentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Comment comment = this.gson.fromJson(req.getReader(), Comment.class);
+        String postId = req.getParameter("postId");
         String id = (String) req.getAttribute("id");
 
         try {
@@ -138,7 +147,7 @@ public class CommentServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        Post post = postRepository.getPostById(comment.getPost().getIdString());
+        Post post = postRepository.getPostById(postId);
         if (post == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -147,7 +156,14 @@ public class CommentServlet extends HttpServlet {
         comment.setUser(user);
         comment.setPost(post);
 
-        commentRepository.saveComment(comment);
+        Long generatedId = commentRepository.saveComment(comment);
+
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        out.print(this.gson.toJson(generatedId));
+        out.flush();
+
         resp.setStatus(HttpServletResponse.SC_CREATED);
     }
 
