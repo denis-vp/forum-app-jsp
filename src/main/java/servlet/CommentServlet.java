@@ -99,6 +99,7 @@ public class CommentServlet extends HttpServlet {
                 comment.getUser().setPassword(null);
                 comment.getUser().setSalt(null);
                 comment.getPost().setComments(null);
+                comment.getPost().getUser().setPosts(null);
                 String commentJsonString = this.gson.toJson(comment);
                 out.print(commentJsonString);
             }

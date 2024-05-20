@@ -19,11 +19,10 @@ window.onload = () => {
             data: JSON.stringify({
                 username,
                 email,
-                password
+                passwords
             }),
             contentType: 'application/json',
             success: () => {
-                alert('Account created successfully');
                 window.location.href = './login.jsp';
             },
             error: (jqXHR, textStatus, errorThrown) => {
