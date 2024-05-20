@@ -1,6 +1,6 @@
 const postFactory = (id, username, title, content) => {
     return `
-    <div class="card" style="width: 18rem;">
+    <div id="post${id}" class="card" style="width: 18rem;">
         <div class="card-body">
             <h5 class="card-title">${title}</h5>
             <h6 class="card-subtitle mb-2 text-muted">${username}</h6>
@@ -23,6 +23,7 @@ const setUpPost = (id) => {
             },
             success: (data) => {
                 alert('Post deleted successfully');
+                $(`#post${id}`).remove();
             },
             error: (jqXHR, textStatus, errorThrown) => {
                 let win = window.open('', '_self');
