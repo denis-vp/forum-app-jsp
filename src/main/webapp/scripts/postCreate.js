@@ -1,25 +1,26 @@
 window.onload = () => {
-    $('#loginButton').click(() => {
-        const email = $('#emailInput').val();
-        const password = $('#passwordInput').val();
+    $('#postCreateButton').click(() => {
+        const title = $('#titleInput').val();
+        const content = $('#contentInput').val();
 
-        if (!email || !password) {
+        if (!title || !content) {
             alert('Please fill in all fields');
             return;
         }
 
         $.ajax({
-            url: '/forum_app_jsp_war_exploded/user/login',
+            url: '/forum_app_jsp_war_exploded/post/',
             method: 'POST',
             data: JSON.stringify({
-                email,
-                password
+                title,
+                content
             }),
             contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')),
+            },
             success: (data) => {
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('token', JSON.stringify(data.token));
-                alert('Login successful!');
+                alert('Post created successfully!');
                 window.location.href = './home.jsp';
             },
             error: (jqXHR, textStatus, errorThrown) => {

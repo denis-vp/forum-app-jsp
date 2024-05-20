@@ -16,6 +16,8 @@ import validator.UserValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "userServlet", urlPatterns = {"/user/*"})
 public class UserServlet extends HttpServlet {
@@ -80,6 +82,8 @@ public class UserServlet extends HttpServlet {
             out.print(userJsonString);
         }
         out.flush();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override
@@ -168,9 +172,21 @@ public class UserServlet extends HttpServlet {
         }
 
         String token = JwtUtil.generateToken(user.getIdString());
-        Cookie tokenCookie = new Cookie("token", token);
-        tokenCookie.setHttpOnly(true);
-        resp.addCookie(tokenCookie);
+
+        user.setPassword(null);
+        user.setSalt(null);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("user", user);
+        responseMap.put("token", token);
+
+        String responseJsonString = this.gson.toJson(responseMap);
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        out.print(responseJsonString);
+        out.flush();
+
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 

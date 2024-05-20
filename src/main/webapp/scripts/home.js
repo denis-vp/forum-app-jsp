@@ -10,19 +10,23 @@ const postFactory = (username, title, content) => {
     </div>`;
 }
 
-window.onload(() => {
-    const posts = $('#postsList');
-    $.ajax({
-        url: '/post/',
-        type: 'GET',
-        dataType: 'json',
-        success: (data) => {
-            data.forEach(post => {
-                posts.append(postFactory(post.user.username, post.title, post.content));
-            });
-        },
-        error: (error) => {
-            console.log(error);
-        }
+window.onload = () => {
+    $('#postCreateButton').click(() => {
+        window.location.href = './postCreate.jsp';
     });
-})
+
+    // const posts = $('#postsList');
+    // $.ajax({
+    //     url: '/forum_app_jsp_war_exploded/post/',
+    //     type: 'GET',
+    //     dataType: 'json',
+    //     success: (data) => {
+    //         data.forEach(post => {
+    //             posts.append(postFactory(post.user.username, post.title, post.content));
+    //         });
+    //     },
+    //     error: (error) => {
+    //         console.log(error);
+    //     }
+    // });
+}

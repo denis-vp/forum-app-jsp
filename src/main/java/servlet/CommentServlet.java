@@ -95,6 +95,8 @@ public class CommentServlet extends HttpServlet {
             }
         }
         out.flush();
+
+        resp.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override
