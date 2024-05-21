@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Forum App</title>
-    <meta http-equiv="refresh" content="0;url=./pages/login.jsp" />
+    <meta http-equiv="refresh" content="0;url=./pages/home.jsp" />
 </head>
 <body>
 </body>
