@@ -22,6 +22,10 @@ public class Post {
     private String content;
 
     @NotNull
+    @Column(name = "is_reported")
+    private boolean isReported;
+
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -54,6 +58,14 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean getIsReported() {
+        return isReported;
+    }
+
+    public void setIsReported(boolean isReported) {
+        this.isReported = isReported;
     }
 
     public User getUser() {

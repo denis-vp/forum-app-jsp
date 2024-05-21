@@ -156,7 +156,16 @@ public class PostServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // If the path is /post/report, handle the report request
+        String pathInfo = req.getPathInfo();
+        if (pathInfo.startsWith("/report")) {
+            handleReport(req, resp);
+            return;
+        }
+
         Post post = this.gson.fromJson(req.getReader(), Post.class);
+        post.setIsReported(false);
+
         String id = (String) req.getAttribute("id");
 
         try {
@@ -210,6 +219,30 @@ public class PostServlet extends HttpServlet {
         }
 
         postRepository.deletePost(postId);
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private void handleReport(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        boolean isReported = Boolean.parseBoolean(req.getParameter("isReported"));
+        String postId = req.getParameter("postId");
+
+        String id = (String) req.getAttribute("id");
+
+        Post postFound = postRepository.getPostById(postId);
+        if (postFound == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        } else if (postFound.getUser().getIdString().equals(id)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        } else if (postFound.getIsReported()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        postFound.setIsReported(isReported);
+
+        postRepository.updatePost(postFound);
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 }
