@@ -11,6 +11,7 @@
 <body style="background-color: #eee;">
 <div class="container">
     <div class="row justify-content-center mt-3">
+        <button id="logoutButton" class="mb-3 col-md-9 btn btn-outline-danger">Logout</button>
         <div id="postsList" class="col-md-10">
             <div class="card mb-3">
                 <div class="card-header">

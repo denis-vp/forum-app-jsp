@@ -37,7 +37,7 @@ public class UserServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String pathInfo = req.getPathInfo();
         // If the path is /login or /register, skip the JWT verification
-        if (pathInfo.equals("/login") || pathInfo.equals("/register")) {
+        if (pathInfo.equals("/login") || pathInfo.equals("/register") || pathInfo.equals("/logout")) {
             super.service(req, resp);
             return;
         }
@@ -72,6 +72,11 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String pathInfo = req.getPathInfo();
+        if (pathInfo.equals("/logout")) {
+            handleLogout(req, resp);
+            return;
+        }
+
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
@@ -227,5 +232,14 @@ public class UserServlet extends HttpServlet {
 
         userRepository.saveUser(user);
         resp.setStatus(HttpServletResponse.SC_CREATED);
+    }
+
+    private void handleLogout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setMaxAge(0);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setPath("/");
+        resp.addCookie(tokenCookie);
+        resp.sendRedirect(req.getContextPath() + "/pages/login.jsp");
     }
 }

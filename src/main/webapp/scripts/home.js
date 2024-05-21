@@ -115,4 +115,24 @@ window.onload = () => {
             win.document.write(jqXHR.responseText);
         }
     });
+
+    $('#logoutButton').click(() => {
+        if (!confirm('Are you sure you want to logout?')) {
+            return;
+        }
+
+        localStorage.removeItem('user');
+        $.ajax({
+            url: '/forum_app_jsp_war_exploded/user/logout',
+            method: 'GET',
+            contentType: 'application/json',
+            success: (data) => {
+                window.location.href = './login.jsp';
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                let win = window.open('', '_self');
+                win.document.write(jqXHR.responseText);
+            }
+        });
+    });
 }
