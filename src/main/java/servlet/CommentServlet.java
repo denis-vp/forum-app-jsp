@@ -82,6 +82,8 @@ public class CommentServlet extends HttpServlet {
                 comment.getUser().setSalt(null);
                 comment.getPost().setComments(null);
                 comment.getPost().getUser().setPosts(null);
+                comment.getPost().getUser().setPassword(null);
+                comment.getPost().getUser().setSalt(null);
             });
             String commentsJsonString = this.gson.toJson(comments);
             out.print(commentsJsonString);
@@ -101,6 +103,8 @@ public class CommentServlet extends HttpServlet {
                 comment.getUser().setSalt(null);
                 comment.getPost().setComments(null);
                 comment.getPost().getUser().setPosts(null);
+                comment.getPost().getUser().setPassword(null);
+                comment.getPost().getUser().setSalt(null);
                 String commentJsonString = this.gson.toJson(comment);
                 out.print(commentJsonString);
             }
@@ -114,6 +118,8 @@ public class CommentServlet extends HttpServlet {
                     comment.getUser().setSalt(null);
                     comment.getPost().setComments(null);
                     comment.getPost().getUser().setPosts(null);
+                    comment.getPost().getUser().setPassword(null);
+                    comment.getPost().getUser().setSalt(null);
                 });
                 String commentsJsonString = this.gson.toJson(comments);
                 out.print(commentsJsonString);
@@ -128,6 +134,8 @@ public class CommentServlet extends HttpServlet {
                     comment.getUser().setSalt(null);
                     comment.getPost().setComments(null);
                     comment.getPost().getUser().setPosts(null);
+                    comment.getPost().getUser().setPassword(null);
+                    comment.getPost().getUser().setSalt(null);
                 });
                 String commentsJsonString = this.gson.toJson(comments);
                 out.print(commentsJsonString);
