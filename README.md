@@ -1,6 +1,7 @@
 # Forum Web Application
 
 ![Java](https://img.shields.io/badge/Java-orange)
+![Hibernate](https://img.shields.io/badge/Hibernate-green)
 ![JSP](https://img.shields.io/badge/JSP-red)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-blue)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
