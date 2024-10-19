@@ -19,7 +19,7 @@ window.onload = () => {
             data: JSON.stringify({
                 username,
                 email,
-                passwords
+                password
             }),
             contentType: 'application/json',
             success: () => {
