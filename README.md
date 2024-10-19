@@ -1,5 +1,9 @@
 # Forum Web Application
 
+![Java](https://img.shields.io/badge/Java-5-orange)
+![JSP](https://img.shields.io/badge/JSP-3-yellow)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-ES6-purple)
+
 ## Overview
 This forum web application is a comprehensive platform that enables users to create accounts, make posts, report inappropriate content, comment on discussions, and delete their own posts and comments. Developed using Java JSP and Hibernate ORM with a MariaDB database, the application emphasizes secure user management through JWT tokens and hashed and salted password storage. The user-friendly frontend is crafted with Bootstrap and jQuery, ensuring a seamless experience.
 
